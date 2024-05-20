@@ -1,0 +1,71 @@
+{
+  "ignorePatterns": ["**/*.mjs", "**/*.config.js", "**/*.d.ts", "build/*"],
+  "extends": ["react-app", "react-app/jest", "prettier"],
+  "plugins": ["import", "promise", "tss-unused-classes"],
+  "rules": {
+    "prefer-const": "warn",
+    "no-return-await": "error",
+    "promise/prefer-await-to-then": "error",
+    "promise/prefer-await-to-callbacks": "error",
+    "import/order": [
+      "warn",
+      {
+        "groups": [
+          "type",
+          "builtin",
+          "external",
+          "internal",
+          "parent",
+          "sibling"
+        ],
+        "pathGroups": [
+          {
+            "pattern": "react",
+            "group": "builtin",
+            "position": "before"
+          },
+          {
+            "pattern": "@mui/material",
+            "group": "external",
+            "position": "before"
+          },
+          {
+            "pattern": "@mui/**",
+            "group": "external",
+            "position": "before"
+          },
+          {
+            "pattern": "@libs/**",
+            "group": "external",
+            "position": "after"
+          }
+        ],
+        "pathGroupsExcludedImportTypes": ["react"],
+        "newlines-between": "never",
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        }
+      }
+    ],
+    "import/first": "error",
+    "import/newline-after-import": "error",
+    "import/no-duplicates": "error",
+    "tss-unused-classes/unused-classes": "warn",
+    "import/no-unresolved": "off",
+    "no-console": "warn",
+    "no-plusplus": "off",
+    "react-hooks/rules-of-hooks": "warn",
+    "react-hooks/exhaustive-deps": "warn",
+    "no-empty-function": [
+      "error",
+      {
+        "allow": ["constructors", "arrowFunctions"]
+      }
+    ],
+    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/no-var-requires": "error",
+    "ban-ts-comment": "off",
+    "no-unused-vars": "warn"
+  }
+}
