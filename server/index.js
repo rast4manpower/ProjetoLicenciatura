@@ -1,27 +1,22 @@
 const express = require("express");
-const mysql = require("mysql");
+const app = express()
+
+const db = require("./models")
+
+//Routers
+const userRouter = require('./routes/users')
+app.use("/users", userRouter);
 
 
-//Opcoes de conexao com o MySQl
-const connection = mysql.createConnection({
-     host : "localhost",
-     user: "root",
-     password: "",
-     database: ""
+
+
+db.sequelize.sync().then(() => {
+    app.listen(3001, () =>{
+        console.log("Servidor iniciado.");
+    });
 });
 
 
-const app = new express();
-app.listen(3000, () =>{
-    console.log("Servidor iniciado.");
-})
 
-//rotas
-app.get("/",(req, res) => {
-    //res.send("Ola Mundo");
-    connection.query("")
-
-
-})
 
 
