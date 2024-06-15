@@ -1,19 +1,23 @@
 module.exports = (sequelize, DataTypes) => {
+  const Users = sequelize.define("Users", {
+    username: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+});
 
-   const users =  sequelize.define("users", {  
-        title: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        postText: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        username: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-   });
+ // Users.associate = (models) => {
+   // Users.has
 
-   return users 
-}
+  //}
+
+
+
+
+
+  return Users;
+};
