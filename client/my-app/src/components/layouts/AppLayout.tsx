@@ -43,10 +43,15 @@ const AppLayout = ({ children }: AppLayoutProps) => {
                   About
                 </Button>
                 <Button component={Link} to={'/products'}>
-                  Product
+                  Products
                 </Button>
               </Box>
-              <Button variant="contained">Login</Button>
+              <Button variant="contained" component={Link} to={'/login'}>
+                Login
+              </Button>
+              <Button variant="contained" component={Link} to={'/signup'}>
+                  Sign Up
+                </Button>
             </Grid>
           </Toolbar>
         </Container>
@@ -57,5 +62,11 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     </>
   )
 }
+
+  
+
+
+
+
 
 export default AppLayout
