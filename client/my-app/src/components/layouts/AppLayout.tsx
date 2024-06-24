@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { AppBar, Box, Button, Container, Grid, Toolbar } from '@mui/material'
 import { NAVBAR_HEIGHT } from '@constants/layout'
+import useAuth from 'hooks/useAuth'
 import { Link } from 'react-router-dom'
 import { makeStyles } from 'tss-react/mui'
 
@@ -23,6 +24,7 @@ const useStyles = makeStyles()((theme) => ({
 
 const AppLayout = ({ children }: AppLayoutProps) => {
   const { classes } = useStyles()
+  const { user, logout } = useAuth()
   return (
     <>
       <AppBar position="fixed" className={classes.appBar}>
@@ -46,7 +48,22 @@ const AppLayout = ({ children }: AppLayoutProps) => {
                   Product
                 </Button>
               </Box>
-              <Button variant="contained">Login</Button>
+              {user ? (
+                <Box gap={2} display="flex">
+                  <Button variant="contained" onClick={logout}>
+                    logout
+                  </Button>
+                </Box>
+              ) : (
+                <Box gap={2} display="flex">
+                  <Button variant="contained" component={Link} to={'/login'}>
+                    Login
+                  </Button>
+                  <Button variant="contained" component={Link} to={'/sign_up'}>
+                    Sign Up
+                  </Button>
+                </Box>
+              )}
             </Grid>
           </Toolbar>
         </Container>

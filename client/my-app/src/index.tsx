@@ -1,4 +1,5 @@
 import { StrictMode } from 'react'
+import { AuthProvider } from '@providers/AuthProvider'
 import NotificationProvider from '@providers/NotificationProvider'
 import RequestsProvider from '@providers/RequestsProvider'
 import ThemeRegistry from '@theme/ThemeRegistry'
@@ -11,7 +12,9 @@ root.render(
     <ThemeRegistry>
       <NotificationProvider dense maxSnack={3} preventDuplicate>
         <RequestsProvider value={{ revalidateOnFocus: false }}>
-          <App />
+          <AuthProvider>
+            <App />
+          </AuthProvider>
         </RequestsProvider>
       </NotificationProvider>
     </ThemeRegistry>
