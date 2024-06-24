@@ -1,4 +1,5 @@
 import { type ReactNode, createContext, memo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 type User = {
   username: string
@@ -34,6 +35,7 @@ const AuthContext = createContext<AuthContextValue | null>(null)
 
 export const AuthProvider = memo(({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null)
+  const navigate = useNavigate()
 
   const login = ({
     username,
@@ -41,10 +43,13 @@ export const AuthProvider = memo(({ children }: AuthProviderProps) => {
   }: {
     username: string
     password: string
-  }) =>
+  }) => {
     //TODO fazer pedido ao servidor
-
+    console.log('username: ', username)
+    console.log('password: ', password)
     setUser({ email: 'email', username: username })
+    navigate('/')
+  }
 
   const logout = () => setUser(null)
 
@@ -61,6 +66,8 @@ export const AuthProvider = memo(({ children }: AuthProviderProps) => {
     console.log('username: ', username)
     console.log('email: ', email)
     console.log('password: ', password)
+    setUser({ email: 'email', username: username })
+    navigate('/')
   }
 
   return (

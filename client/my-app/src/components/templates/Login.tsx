@@ -6,12 +6,24 @@ import {
   Grid,
   Typography,
   Container,
+  Avatar,
+  Box,
 } from '@mui/material'
 import useAuth from 'hooks/useAuth'
 import { ChangeEvent, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { makeStyles } from 'tss-react/mui'
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
+
+const useStyles = makeStyles()((theme) => ({
+  avatar: {
+    margin: theme.spacing(0),
+    backgroundColor: theme.palette.secondary.main,
+  },
+}))
 
 const Login = () => {
+  const { classes } = useStyles()
   const { login } = useAuth()
 
   const [account, setAccount] = useState({ username: '', password: '' })
@@ -29,7 +41,6 @@ const Login = () => {
   return (
     <Container
       sx={{
-        bgcolor: 'lightblue',
         minHeight: `calc(100vh - ${NAVBAR_HEIGHT}px - 48px)`,
         display: 'flex',
         padding: 0,
@@ -38,9 +49,19 @@ const Login = () => {
       }}
       style={{ padding: 0 }}
     >
-      <Paper sx={{ padding: 2, width: 400 }}>
-        <Grid container gap={2} direction="column">
-          <Typography variant="h3">Login</Typography>
+      <Paper sx={{ padding: 5, width: 450 }}>
+        <Grid container gap={3} direction="column">
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            flexDirection="column"
+          >
+            <Avatar className={classes.avatar}>
+              <LockOutlinedIcon />
+            </Avatar>
+            <Typography variant="h4">Login</Typography>
+          </Box>
           <TextField
             onChange={(event) => handelAccount('username', event)}
             variant="outlined"
@@ -64,9 +85,10 @@ const Login = () => {
             autoComplete="current-password"
           />
 
+          <Button variant="contained" onClick={() => login(account)}>
+            Login
+          </Button>
           <Link to={'/sign_up'}>{"Don't have an account? Sign Up"}</Link>
-
-          <Button onClick={() => login(account)}>Login</Button>
         </Grid>
       </Paper>
     </Container>
