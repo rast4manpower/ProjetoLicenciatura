@@ -8,6 +8,8 @@ import SignUp from '@components/templates/SignUp'
 import Login from '@components/templates/Login'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 
+
+
 const App: FC = () => {
   return (
     <Router>
@@ -18,7 +20,7 @@ const App: FC = () => {
           <Route path="/products" element={<Products />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/teste" element={<Contact />} />
-          <Route path="/signUp" element={<SignUp/>} />
+          <Route path="/signup" element={<SignUp/>} />
           <Route path="/login" element={<Login/>} />
         </Routes>
       </AppLayout>
