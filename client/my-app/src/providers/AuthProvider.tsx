@@ -1,20 +1,26 @@
 import { type ReactNode, createContext, memo, useState } from 'react'
 
 type User = {
-  name: string
+  username: string
   email: string
 }
 
 type AuthContextValue = {
   user: User | null
-  login: ({ email, password }: { email: string; password: string }) => void
+  login: ({
+    username,
+    password,
+  }: {
+    username: string
+    password: string
+  }) => void
   logout: () => void
   signUp: ({
-    nome,
+    username,
     password,
     email,
   }: {
-    nome: string
+    username: string
     email: string
     password: string
   }) => void
@@ -29,24 +35,30 @@ const AuthContext = createContext<AuthContextValue | null>(null)
 export const AuthProvider = memo(({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null)
 
-  const login = ({ email, password }: { email: string; password: string }) =>
+  const login = ({
+    username,
+    password,
+  }: {
+    username: string
+    password: string
+  }) =>
     //TODO fazer pedido ao servidor
 
-    setUser({ name: 'Joao', email: email })
+    setUser({ email: 'email', username: username })
 
   const logout = () => setUser(null)
 
   const signUp = ({
-    nome,
-    password,
+    username,
     email,
+    password,
   }: {
-    nome: string
+    username: string
     email: string
     password: string
   }) => {
     //TODO fazer registo no servidor
-    console.log('nome: ', nome)
+    console.log('username: ', username)
     console.log('email: ', email)
     console.log('password: ', password)
   }
