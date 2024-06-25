@@ -2,38 +2,58 @@ const express = require("express");
 const router = express.Router();
 const { Users } = require("../models");
 const bcrypt = require("bcrypt");
-const{sign} = require("jsonwebtoken");
+
 
 
 router.post("/", async (req, res) => {
-  const { username, password } = req.body;
-  bcrypt.hash(password, 10).then((hash) => {
-    Users.create({
-      username: username,
-      password: hash,
+  const { username, email, password } = req.body;
+  
+  try {
+    const existingUser = await Users.findOne({ where: { username: username } });
+    
+    if (existingUser) {
+      return res.json({ error: "Username already exists" });
+    }
+    
+    bcrypt.hash(password, 10).then((hash) => {
+      Users.create({
+        username: username,
+        email : email,
+        password: hash,
+      });
+      res.json("SUCCESS");
     });
-    res.json("SUCCESS");
-  });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
 });
 
 router.post("/login", async (req, res) => {
   const { username, password } = req.body;
 
-  const user = await Users.findOne({ where: { username: username } });
+  try {
+    const user = await Users.findOne({ where: { username: username } });
 
-  if (!user) res.json({ error: "User Doesn't Exist" });
+    if (!user) {
+      return res.json({ error: "User doesn't exist" });
+    }
 
-  bcrypt.compare(password, user.password).then(async (match) => {
-    if (!match) res.json({ error: "Wrong Username And Password Combination" });
-
-    const accessToken = sign(
-      { username: user.username, id: user.id },
-      "importantsecret"
-    );
-    res.json(accessToken);
-  });
+    bcrypt.compare(password, user.password).then((match) => {
+      if (!match) {
+        res.json({ error: "Wrong username and password combination" });
+      } else {
+        res.json("YOU LOGGED IN!!!");
+      }
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
 });
 
-
-
 module.exports = router;
+
+
+
+

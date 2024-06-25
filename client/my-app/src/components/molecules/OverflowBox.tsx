@@ -14,7 +14,6 @@ const useStyles = makeStyles<{
   wordBreak?: 'anywhere' | 'break-word'
 }>()((_, { displayLines, wordBreak }) => ({
   lineEllipsis: {
-    backgroundColor: 'lightblue',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     display: '-webkit-box',

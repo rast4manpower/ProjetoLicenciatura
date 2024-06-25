@@ -1,39 +1,98 @@
-import React, { useState } from "react";
-import axios from "axios";
+export default Login;
+import { NAVBAR_HEIGHT } from '@constants/layout'
+import {
+  Paper,
+  Button,
+  TextField,
+  Grid,
+  Typography,
+  Container,
+  Avatar,
+  Box,
+} from '@mui/material'
+import useAuth from 'hooks/useAuth'
+import { ChangeEvent, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { makeStyles } from 'tss-react/mui'
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 
-const Login: React.FC = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+const useStyles = makeStyles()((theme) => ({
+  avatar: {
+    margin: theme.spacing(0),
+    backgroundColor: theme.palette.secondary.main,
+  },
+}))
 
-  const login = async () => {
-    const data = { username, password };
-    try {
-      const response = await axios.post("http://localhost:3001/auth/login", data);
-      console.log("Login successful:", response.data);
-      // Optionally handle success feedback or redirect to another page
-    } catch (error) {
-      console.error("Error logging in:", error);
-      // Optionally handle error feedback
-    }
-  };
+const Login = () => {
+  const { classes } = useStyles()
+  const { login } = useAuth()
+
+  const [account, setAccount] = useState({ username: '', password: '' })
+
+  const handelAccount = (
+    property: 'username' | 'password',
+    event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
+  ) => {
+    setAccount((previous) => ({
+      ...previous,
+      [property]: event.target.value,
+    }))
+  }
 
   return (
-    <div className="loginContainer">
-      <label>Username:</label>
-      <input
-        type="text"
-        value={username}
-        onChange={(event) => setUsername(event.target.value)}
-      />
-      <label>Password:</label>
-      <input
-        type="password"
-        value={password}
-        onChange={(event) => setPassword(event.target.value)}
-      />
-      <button onClick={login}>Login</button>
-    </div>
-  );
-};
+    <Container
+      sx={{
+        minHeight: `calc(100vh - ${NAVBAR_HEIGHT}px - 48px)`,
+        display: 'flex',
+        padding: 0,
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+      style={{ padding: 0 }}
+    >
+      <Paper sx={{ padding: 5, width: 450 }}>
+        <Grid container gap={3} direction="column">
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            flexDirection="column"
+          >
+            <Avatar className={classes.avatar}>
+              <LockOutlinedIcon />
+            </Avatar>
+            <Typography variant="h4">Login</Typography>
+          </Box>
+          <TextField
+            onChange={(event) => handelAccount('username', event)}
+            variant="outlined"
+            required
+            fullWidth
+            id="username"
+            label="Username"
+            name="username"
+            autoFocus
+          />
 
-export default Login;
+          <TextField
+            onChange={(event) => handelAccount('password', event)}
+            variant="outlined"
+            required
+            fullWidth
+            name="password"
+            label="Password"
+            type="password"
+            id="password"
+            autoComplete="current-password"
+          />
+
+          <Button variant="contained" onClick={() => login(account)}>
+            Login
+          </Button>
+          <Link to={'/sign_up'}>{"Don't have an account? Sign Up"}</Link>
+        </Grid>
+      </Paper>
+    </Container>
+  )
+}
+export default Login
