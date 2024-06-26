@@ -9,10 +9,10 @@ import {
   Toolbar,
 } from '@mui/material'
 import { NAVBAR_HEIGHT } from '@constants/layout'
+import { getInitials } from '@utils/string'
 import useAuth from 'hooks/useAuth'
 import { Link } from 'react-router-dom'
 import { makeStyles } from 'tss-react/mui'
-import { getInitials } from '@utils/string'
 
 type AppLayoutProps = {
   children: ReactNode
@@ -86,11 +86,5 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     </>
   )
 }
-
-  
-
-
-
-
 
 export default AppLayout

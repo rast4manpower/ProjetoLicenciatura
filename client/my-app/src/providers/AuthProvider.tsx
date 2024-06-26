@@ -1,4 +1,6 @@
 import { type ReactNode, createContext, memo, useState } from 'react'
+import axios from 'axios'
+import { useSnackbar } from 'notistack'
 import { useNavigate } from 'react-router-dom'
 
 type User = {
@@ -14,8 +16,8 @@ type AuthContextValue = {
   }: {
     username: string
     password: string
-  }) => void
-  logout: () => void
+  }) => Promise<void>
+  logout: () => Promise<void>
   signUp: ({
     username,
     password,
@@ -24,7 +26,7 @@ type AuthContextValue = {
     username: string
     email: string
     password: string
-  }) => void
+  }) => Promise<void>
 }
 
 type AuthProviderProps = {
@@ -36,38 +38,51 @@ const AuthContext = createContext<AuthContextValue | null>(null)
 export const AuthProvider = memo(({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null)
   const navigate = useNavigate()
+  const { enqueueSnackbar } = useSnackbar()
 
-  const login = ({
+  const login = async ({
     username,
     password,
   }: {
     username: string
     password: string
   }) => {
-    //TODO fazer pedido ao servidor
-    console.log('username: ', username)
-    console.log('password: ', password)
-    setUser({ email: 'email', username: username })
-    navigate('/')
+    try {
+      const response = await axios.post('http://localhost:3001/auth/login', {
+        username,
+        password,
+      })
+      setUser({ email: 'email', username: username })
+      enqueueSnackbar('Login successful', { variant: 'success' })
+      navigate('/')
+    } catch (error) {
+      enqueueSnackbar('Invalid credentials', { variant: 'error' })
+    }
   }
 
-  const logout = () => setUser(null)
+  const logout = async () => setUser(null)
 
-  const signUp = ({
+  const signUp = async ({
     username,
-    email,
     password,
+    email,
   }: {
     username: string
-    email: string
     password: string
+    email: string
   }) => {
-    //TODO fazer registo no servidor
-    console.log('username: ', username)
-    console.log('email: ', email)
-    console.log('password: ', password)
-    setUser({ email: 'email', username: username })
-    navigate('/')
+    try {
+      const response = await axios.post('http://localhost:3001/auth', {
+        username,
+        password,
+        email,
+      })
+      setUser({ email: 'email', username: username })
+      enqueueSnackbar('Sign up successful', { variant: 'success' })
+      navigate('/')
+    } catch (error) {
+      enqueueSnackbar('Something went wrong', { variant: 'error' })
+    }
   }
 
   return (

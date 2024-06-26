@@ -1,7 +1,7 @@
+import { ReactNode } from 'react'
 import { Box, Button, ButtonProps, Card, Fab, Typography } from '@mui/material'
 import { AddRounded } from '@mui/icons-material'
 import { makeStyles } from 'tss-react/mui'
-import { ReactNode } from 'react'
 
 type AddNewItemCardProps = {
   title: ReactNode

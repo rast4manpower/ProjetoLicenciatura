@@ -1,9 +1,9 @@
-import { Box, Card, Grid, Typography } from '@mui/material'
+import { Box, Card, Grid } from '@mui/material'
 import { PlaceOutlined, CalendarTodayRounded } from '@mui/icons-material'
+import MoreVertIcon from '@mui/icons-material/MoreVert'
 import Price from '@components/atoms/Price'
 import { format } from 'date-fns'
 import OverflowBox from './OverflowBox'
-import MoreVertIcon from '@mui/icons-material/MoreVert'
 
 type ItemCardProps = {
   item: {

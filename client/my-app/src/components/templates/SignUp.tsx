@@ -1,35 +1,37 @@
-import { NAVBAR_HEIGHT } from '@constants/layout';
+import { ChangeEvent, useState } from 'react'
 import {
   Paper,
-  Button,
   TextField,
   Grid,
   Typography,
   Container,
   Avatar,
   Box,
-} from '@mui/material';
-import { ChangeEvent, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { makeStyles } from 'tss-react/mui';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import axios from 'axios';
+} from '@mui/material'
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
+import { LoadingButton } from '@mui/lab'
+import { NAVBAR_HEIGHT } from '@constants/layout'
+import useAuth from '@hooks/useAuth'
+import { Link } from 'react-router-dom'
+import { makeStyles } from 'tss-react/mui'
 
 const useStyles = makeStyles()((theme) => ({
   avatar: {
     margin: theme.spacing(0),
     backgroundColor: theme.palette.secondary.main,
   },
-}));
+}))
 
 const Login = () => {
-  const { classes } = useStyles();
+  const { classes } = useStyles()
+  const { signUp } = useAuth()
 
+  const [isLoading, setIsLoading] = useState(false)
   const [account, setAccount] = useState({
     username: '',
     password: '',
     email: '',
-  });
+  })
 
   const handleAccountChange = (
     property: 'username' | 'password' | 'email',
@@ -38,19 +40,14 @@ const Login = () => {
     setAccount((previous) => ({
       ...previous,
       [property]: event.target.value,
-    }));
-  };
+    }))
+  }
 
-  const handleLogin = async () => {
-    try {
-      const response = await axios.post('http://localhost:3001/auth', account);
-      console.log(response.data);
-      alert('Login successful');
-    } catch (error) {
-      console.error(error);
-      alert('Invalid credentials');
-    }
-  };
+  const handleSignUp = async () => {
+    setIsLoading(true)
+    await signUp(account)
+    setIsLoading(false)
+  }
 
   return (
     <Container
@@ -83,7 +80,6 @@ const Login = () => {
             id="username"
             label="Username"
             name="username"
-            autoFocus
           />
 
           <TextField
@@ -109,14 +105,18 @@ const Login = () => {
             autoComplete="current-password"
           />
 
-          <Button variant="contained" onClick={handleLogin}>
-            Signup
-          </Button>
-          <Link to={'/signup'}>{"Don't have an account? Sign Up"}</Link>
+          <LoadingButton
+            variant="contained"
+            loading={isLoading}
+            onClick={handleSignUp}
+          >
+            Sign Up
+          </LoadingButton>
+          <Link to={'/login'}>{'Already have an account? Login'}</Link>
         </Grid>
       </Paper>
     </Container>
-  );
-};
+  )
+}
 
-export default Login;
+export default Login

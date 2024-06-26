@@ -1,4 +1,4 @@
-const path = require(`path`);
+const path = require(`path`)
 
 module.exports = {
   webpack: {
@@ -8,6 +8,7 @@ module.exports = {
       '@constants': path.resolve(__dirname, 'src/constants'),
       '@providers': path.resolve(__dirname, 'src/providers'),
       '@utils': path.resolve(__dirname, 'src/utils'),
-    }
+      '@hooks': path.resolve(__dirname, 'src/hooks'),
+    },
   },
-};
+}

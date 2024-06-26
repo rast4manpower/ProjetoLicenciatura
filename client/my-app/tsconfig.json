@@ -21,7 +21,8 @@
       "@theme/*": ["./theme/*"],
       "@constants/*": ["./constants/*"],
       "@providers/*": ["./providers/*"],
-      "@utils/*": ["./utils/*"]
+      "@utils/*": ["./utils/*"],
+      "@hooks/*": ["./hooks/*"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx"],
