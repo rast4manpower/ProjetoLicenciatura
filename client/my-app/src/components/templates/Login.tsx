@@ -9,7 +9,6 @@ import {
   Avatar,
   Box,
 } from '@mui/material';
-import useAuth from 'hooks/useAuth';
 import { ChangeEvent, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { makeStyles } from 'tss-react/mui';
@@ -25,12 +24,13 @@ const useStyles = makeStyles()((theme) => ({
 
 const Login = () => {
   const { classes } = useStyles();
-  const { login } = useAuth();
 
-  const [account, setAccount] = useState({ username: '', password: '' });
-  const [error, setError] = useState<string | null>(null);
+  const [account, setAccount] = useState({
+    username: '',
+    password: '',
+  });
 
-  const handleAccount = (
+  const handleAccountChange = (
     property: 'username' | 'password',
     event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
   ) => {
@@ -43,9 +43,11 @@ const Login = () => {
   const handleLogin = async () => {
     try {
       const response = await axios.post('http://localhost:3001/auth/login', account);
-      login(response.data);
+      console.log(response.data);
+      alert('Login successful');
     } catch (error) {
-      setError('Login failed. Please check your credentials and try again.');
+      console.error(error);
+      alert('Invalid credentials');
     }
   };
 
@@ -58,7 +60,6 @@ const Login = () => {
         alignItems: 'center',
         justifyContent: 'center',
       }}
-      style={{ padding: 0 }}
     >
       <Paper sx={{ padding: 5, width: 450 }}>
         <Grid container gap={3} direction="column">
@@ -73,13 +74,8 @@ const Login = () => {
             </Avatar>
             <Typography variant="h4">Login</Typography>
           </Box>
-          {error && (
-            <Typography color="error" variant="body2">
-              {error}
-            </Typography>
-          )}
           <TextField
-            onChange={(event) => handleAccount('username', event)}
+            onChange={(event) => handleAccountChange('username', event)}
             variant="outlined"
             required
             fullWidth
@@ -90,7 +86,7 @@ const Login = () => {
           />
 
           <TextField
-            onChange={(event) => handleAccount('password', event)}
+            onChange={(event) => handleAccountChange('password', event)}
             variant="outlined"
             required
             fullWidth
@@ -104,7 +100,7 @@ const Login = () => {
           <Button variant="contained" onClick={handleLogin}>
             Login
           </Button>
-          <Link to={'/sign_up'}>{"Don't have an account? Sign Up"}</Link>
+          <Link to={'/signup'}>{"Don't have an account? Sign Up"}</Link>
         </Grid>
       </Paper>
     </Container>
