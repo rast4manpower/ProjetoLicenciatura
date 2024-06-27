@@ -55,7 +55,7 @@ export const AuthProvider = memo(({ children }: AuthProviderProps) => {
       setUser({ email: 'email', username: username })
       enqueueSnackbar('Login successful', { variant: 'success' })
       navigate('/')
-    } catch (error : any) {
+    } catch (error: any) {
       enqueueSnackbar(error.response.data.error, { variant: 'error' })
     }
   }
@@ -78,11 +78,11 @@ export const AuthProvider = memo(({ children }: AuthProviderProps) => {
         email,
       })
 
-      console.log(response )
+      console.log(response)
       setUser({ email: 'email', username: username })
       enqueueSnackbar('Sign up successful', { variant: 'success' })
       navigate('/')
-    } catch (error : any) {
+    } catch (error: any) {
       console.log(error)
       enqueueSnackbar(error.response.data.error, { variant: 'error' })
     }

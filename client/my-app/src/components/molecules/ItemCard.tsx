@@ -3,24 +3,29 @@ import { PlaceOutlined, CalendarTodayRounded } from '@mui/icons-material'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import Price from '@components/atoms/Price'
 import { format } from 'date-fns'
+import { Item } from './AddNewItemModal'
 import OverflowBox from './OverflowBox'
 
 type ItemCardProps = {
   item: {
     name: string
     image: string
-    location: {
-      city: string
-      venue: string
-    }
+    address: string
     price: number
     sellerName: string
     createdAt: string
   }
   variant?: 'buyer' | 'seller'
+  handleSelectItem?: (item: Item) => void
+  handleDeleteItem?: () => Promise<void>
 }
 
-const ItemCard = ({ item, variant = 'buyer' }: ItemCardProps) => {
+const ItemCard = ({
+  item,
+  variant = 'buyer',
+  handleSelectItem,
+  handleDeleteItem,
+}: ItemCardProps) => {
   return (
     <Card sx={{ position: 'relative' }}>
       <Box
@@ -73,7 +78,7 @@ const ItemCard = ({ item, variant = 'buyer' }: ItemCardProps) => {
           <PlaceOutlined sx={{ color: 'action.active' }} fontSize="small" />
           <OverflowBox
             variant="body2"
-            text={`${item.location.venue}, ${item.location.city}`}
+            text={item.address}
             color="text.secondary"
           />
         </Box>

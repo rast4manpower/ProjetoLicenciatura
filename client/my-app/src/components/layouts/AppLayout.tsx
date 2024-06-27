@@ -27,7 +27,7 @@ const useStyles = makeStyles()((theme) => ({
   contentContainer: {
     minHeight: `calc(100vh - ${NAVBAR_HEIGHT}px)`,
     marginTop: NAVBAR_HEIGHT,
-    padding: theme.spacing(3, 0),
+    padding: theme.spacing(3, 2),
   },
 }))
 
@@ -49,9 +49,6 @@ const AppLayout = ({ children }: AppLayoutProps) => {
               <Box display="flex" gap={1}>
                 <Button component={Link} to={'/'}>
                   Home
-                </Button>
-                <Button component={Link} to={'/About'}>
-                  About
                 </Button>
                 {user && (
                   <Button component={Link} to={'/products'}>

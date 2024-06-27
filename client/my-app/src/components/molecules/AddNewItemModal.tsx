@@ -7,34 +7,60 @@ import {
   Button,
   Grid,
   InputAdornment,
+  Select,
+  MenuItem,
+  SelectChangeEvent,
+  InputLabel,
+  FormControl,
 } from '@mui/material'
 import EuroIcon from '@mui/icons-material/Euro'
 import { fileToBase64 } from '@utils/file'
+import axios from 'axios'
+
+export type Item = {
+  name: string
+  description: string
+  price: string
+  image: File | undefined
+  address: string
+  category: string
+}
 
 type AddNewItemModalProps = {
+  selectedItem?: Item
   open: boolean
   handleClose: () => void
 }
 
-const AddNewItemModal = ({ open, handleClose }: AddNewItemModalProps) => {
-  const defaultState: {
-    name: string
-    description: string
-    price: string
-    image: File | undefined
-    address: string
-  } = {
+const categories = [
+  'Desporto',
+  'Montanha',
+  'Casual',
+  'Mulher',
+  'Homem',
+  'Criança',
+]
+
+const AddNewItemModal = ({
+  selectedItem,
+  open,
+  handleClose,
+}: AddNewItemModalProps) => {
+  const defaultState: Item = selectedItem ?? {
     name: '',
     description: '',
     price: '',
     image: undefined,
     address: '',
+    category: '',
   }
   const [product, setProduct] = useState(defaultState)
 
   const handleAccountChange = (
-    property: 'name' | 'description' | 'address',
-    event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
+    property: 'name' | 'description' | 'address' | 'category',
+    event:
+      | ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+      | SelectChangeEvent<string>,
   ) => {
     setProduct((previous) => ({
       ...previous,
@@ -50,13 +76,14 @@ const AddNewItemModal = ({ open, handleClose }: AddNewItemModalProps) => {
   const handleSubmit = async () => {
     if (product.image) {
       const result = { ...product, image: await fileToBase64(product.image) }
-      //fazer pedido para a api
+      //TODO fazer pedido para a api
+      await axios.post('http://localhost:3001/EditProduct')
       console.log(result)
     }
   }
 
   return (
-    <Dialog open={open} onClose={handleCloseModal}>
+    <Dialog open={open}>
       <Card sx={{ padding: 3 }}>
         <Grid container gap={3}>
           <Typography variant="h5">Sell your Item</Typography>
@@ -135,6 +162,22 @@ const AddNewItemModal = ({ open, handleClose }: AddNewItemModalProps) => {
             }}
           />
 
+          <FormControl fullWidth>
+            <InputLabel id="category">Age</InputLabel>
+            <Select
+              value={product.category}
+              id="category"
+              label="Category"
+              name="category"
+              onChange={(event) => handleAccountChange('category', event)}
+            >
+              {categories.map((category) => (
+                <MenuItem key={category} value={category}>
+                  {category}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
           <TextField
             onChange={(event) => handleAccountChange('address', event)}
             variant="outlined"
