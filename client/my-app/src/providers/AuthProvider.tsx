@@ -1,5 +1,5 @@
 import { type ReactNode, createContext, memo, useState } from 'react'
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import { useSnackbar } from 'notistack'
 import { useNavigate } from 'react-router-dom'
 
@@ -55,8 +55,8 @@ export const AuthProvider = memo(({ children }: AuthProviderProps) => {
       setUser({ email: 'email', username: username })
       enqueueSnackbar('Login successful', { variant: 'success' })
       navigate('/')
-    } catch (error) {
-      enqueueSnackbar('Invalid credentials', { variant: 'error' })
+    } catch (error : any) {
+      enqueueSnackbar(error.response.data.error, { variant: 'error' })
     }
   }
 
@@ -77,11 +77,14 @@ export const AuthProvider = memo(({ children }: AuthProviderProps) => {
         password,
         email,
       })
+
+      console.log(response )
       setUser({ email: 'email', username: username })
       enqueueSnackbar('Sign up successful', { variant: 'success' })
       navigate('/')
-    } catch (error) {
-      enqueueSnackbar('Something went wrong', { variant: 'error' })
+    } catch (error : any) {
+      console.log(error)
+      enqueueSnackbar(error.response.data.error, { variant: 'error' })
     }
   }
 
