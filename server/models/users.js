@@ -15,6 +15,19 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
 });
-  return Users;
+  
+//User.associate = (models) => {
+  // Um usuário pode ter muitos produtos
+ // User.hasMany(models.Product, {
+   // as: "products", // Alias para a associação
+   // foreignKey: {
+   //   name: "userId",
+   //   allowNull: false,
+   // },
+   // onDelete: "CASCADE",
+  //});
+//};
+
+return Users;
 };
 

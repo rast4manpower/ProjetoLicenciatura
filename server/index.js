@@ -18,6 +18,10 @@ const db = require("./models")
 const usersRouter = require("./routes/users");
 app.use("/auth", usersRouter);
 
+const productsRouter = require("./routes/products")
+app.use("/products", productsRouter );
+
+
 db.sequelize.sync()
   .then(() => {
     app.listen(3001, () => {
@@ -33,12 +37,6 @@ db.sequelize.sync()
 
 
 
-
-//db.sequelize.sync().then(() => {
-  //  app.listen(3001, () => {
-     //   console.log("Servidor iniciado.");
-   // });
-//});
 
 
 

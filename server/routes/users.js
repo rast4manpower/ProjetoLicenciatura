@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { Users } = require("../models");
 const bcrypt = require("bcrypt");
-
+const{sign} = require("jsonwebtoken");
 
 
 router.post("/", async (req, res) => {
@@ -12,7 +12,7 @@ router.post("/", async (req, res) => {
     const existingUser = await Users.findOne({ where: { username: username } });
     
     if (existingUser) {
-      return res.json({ error: "Username already exists" });
+      return res.status(400).json({ error: "Username already exists" });
     }
     
     bcrypt.hash(password, 10).then((hash) => {
@@ -24,7 +24,6 @@ router.post("/", async (req, res) => {
       res.json("SUCCESS");
     });
   } catch (err) {
-    console.error(err);
     res.status(500).json({ error: "Server error" });
   }
 });
@@ -36,14 +35,19 @@ router.post("/login", async (req, res) => {
     const user = await Users.findOne({ where: { username: username } });
 
     if (!user) {
-      return res.json({ error: "User doesn't exist" });
+
+      return  res.status(400).json({ error: "User doesn't exist" });
     }
 
     bcrypt.compare(password, user.password).then((match) => {
       if (!match) {
         res.json({ error: "Wrong username and password combination" });
       } else {
-        res.json("YOU LOGGED IN!!!");
+        const acessToken = sign(
+          {username: user.username, id: user.id},
+          "secret"
+        );
+        res.json(acessToken);
       }
     });
   } catch (err) {
