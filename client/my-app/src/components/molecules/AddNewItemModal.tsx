@@ -15,7 +15,9 @@ import {
 } from '@mui/material'
 import EuroIcon from '@mui/icons-material/Euro'
 import { fileToBase64 } from '@utils/file'
+import { useSnackbar } from 'notistack'
 import axios from 'axios'
+import useAuth from 'hooks/useAuth'
 
 export type Item = {
   name: string
@@ -24,12 +26,14 @@ export type Item = {
   image: File | undefined
   address: string
   category: string
+  brand: string
 }
 
 type AddNewItemModalProps = {
   selectedItem?: Item
   open: boolean
   handleClose: () => void
+  mutate: ()=> void
 }
 
 const categories = [
@@ -41,10 +45,19 @@ const categories = [
   'Criança',
 ]
 
+const brands = [
+  'Nike',
+  'Adidas',
+  'North Face',
+  'Vans',
+  'New Balance',
+]
+
 const AddNewItemModal = ({
   selectedItem,
   open,
   handleClose,
+  mutate
 }: AddNewItemModalProps) => {
   const defaultState: Item = selectedItem ?? {
     name: '',
@@ -53,11 +66,15 @@ const AddNewItemModal = ({
     image: undefined,
     address: '',
     category: '',
+    brand: '',
   }
   const [product, setProduct] = useState(defaultState)
 
+  const { enqueueSnackbar } = useSnackbar()
+  const {user} = useAuth()
+
   const handleAccountChange = (
-    property: 'name' | 'description' | 'address' | 'category',
+    property: 'name' | 'description' | 'address' | 'category' | 'brand',
     event:
       | ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
       | SelectChangeEvent<string>,
@@ -75,16 +92,26 @@ const AddNewItemModal = ({
 
   const handleSubmit = async () => {
     if (product.image) {
-      const result = { ...product, image: await fileToBase64(product.image) }
-      //TODO fazer pedido para a api
-      await axios.post('http://localhost:3001/EditProduct')
-      console.log(result)
+      const image = await fileToBase64(product.image)
+      const result = { ...product, image: 'teste', sellerId: user?.id, sellerName:user?.username }
+      try {
+        const response = await axios.post('http://localhost:3001/products',
+          result
+      )
+        enqueueSnackbar('Product Created!', { variant: 'success' })
+      if(response) {
+        mutate()
+        handleCloseModal()
+      }
+    } catch (error: any) {
+      enqueueSnackbar(error.response.data.error ?? 'Something went very wrong', { variant: 'error' })
+    }
     }
   }
 
   return (
     <Dialog open={open}>
-      <Card sx={{ padding: 3 }}>
+      <Card sx={{ padding: 3, overflow:"auto" }} >
         <Grid container gap={3}>
           <Typography variant="h5">Sell your Item</Typography>
           <TextField
@@ -163,7 +190,7 @@ const AddNewItemModal = ({
           />
 
           <FormControl fullWidth>
-            <InputLabel id="category">Age</InputLabel>
+            <InputLabel id="category">Category</InputLabel>
             <Select
               value={product.category}
               id="category"
@@ -174,6 +201,22 @@ const AddNewItemModal = ({
               {categories.map((category) => (
                 <MenuItem key={category} value={category}>
                   {category}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl fullWidth>
+            <InputLabel id="brand">Brand</InputLabel>
+            <Select
+              value={product.brand}
+              id="brand"
+              label="Brand"
+              name="brand"
+              onChange={(event) => handleAccountChange('brand', event)}
+            >
+              {brands.map((brand) => (
+                <MenuItem key={brand} value={brand}>
+                  {brand}
                 </MenuItem>
               ))}
             </Select>

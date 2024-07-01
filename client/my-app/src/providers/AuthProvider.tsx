@@ -1,11 +1,11 @@
-import { type ReactNode, createContext, memo, useState } from 'react'
-import axios, { AxiosError } from 'axios'
+import { type ReactNode, createContext, memo, useState, useEffect } from 'react'
+import axios from 'axios'
 import { useSnackbar } from 'notistack'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 type User = {
+  id: string
   username: string
-  email: string
 }
 
 type AuthContextValue = {
@@ -39,6 +39,7 @@ export const AuthProvider = memo(({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null)
   const navigate = useNavigate()
   const { enqueueSnackbar } = useSnackbar()
+  const { pathname } = useLocation()
 
   const login = async ({
     username,
@@ -52,7 +53,8 @@ export const AuthProvider = memo(({ children }: AuthProviderProps) => {
         username,
         password,
       })
-      setUser({ email: 'email', username: username })
+
+      updateUser({ id: response.data.id, username: response.data.username })
       enqueueSnackbar('Login successful', { variant: 'success' })
       navigate('/')
     } catch (error: any) {
@@ -60,7 +62,10 @@ export const AuthProvider = memo(({ children }: AuthProviderProps) => {
     }
   }
 
-  const logout = async () => setUser(null)
+  const logout = async () => {
+    updateUser(null)
+    if( pathname === '/products') navigate('/')
+  }
 
   const signUp = async ({
     username,
@@ -78,8 +83,7 @@ export const AuthProvider = memo(({ children }: AuthProviderProps) => {
         email,
       })
 
-      console.log(response)
-      setUser({ email: 'email', username: username })
+      updateUser({ id: response.data.id, username: response.data.username })
       enqueueSnackbar('Sign up successful', { variant: 'success' })
       navigate('/')
     } catch (error: any) {
@@ -87,6 +91,17 @@ export const AuthProvider = memo(({ children }: AuthProviderProps) => {
       enqueueSnackbar(error.response.data.error, { variant: 'error' })
     }
   }
+
+  const updateUser = (user: User|null) => {
+    setUser(user)
+    localStorage.setItem("auth", JSON.stringify(user))
+  }
+  
+
+  useEffect(() => {
+    const user = localStorage.getItem("auth")
+    setUser(user ? JSON.parse(user) : null)
+  }, [])
 
   return (
     <AuthContext.Provider

@@ -1,43 +1,24 @@
 import { useState } from 'react'
-import { Grid } from '@mui/material'
+import { Grid, Typography } from '@mui/material'
 import AddNewItemCard from '@components/molecules/AddNewItemCard'
 import AddNewItemModal, { Item } from '@components/molecules/AddNewItemModal'
 import ItemCard from '@components/molecules/ItemCard'
 import useModal from '@hooks/useModal'
 import axios from 'axios'
+import useAuth from '@hooks/useAuth'
+import useSWR from 'swr'
 
 const Products = () => {
   const { open, handleOpen, handleClose } = useModal()
 
   const [selectedItem, setSelectedItem] = useState<Item>()
   const [isLoading, setIsLoading] = useState(false)
+  const [shouldUpdate, setShouldUpdate] = useState(true)
+  const { user } = useAuth()
 
-  const fakeItem = {
-    name: 'Item name',
-    price: 30,
-    address: 'Rua da Carreira',
-    image: 'url',
-    sellerName: 'João José',
-    createdAt: new Date('01/20/2020').toISOString(),
-  }
-  const fakeItem2 = {
-    name: 'Item name',
-    price: 30,
-    address: 'Rua da Carreira',
-    image: 'url',
-    sellerName: 'João José',
-    createdAt: new Date('01/20/2020').toISOString(),
-  }
-  const fakeItem3 = {
-    name: 'Item name',
-    price: 30,
-    address: 'Rua da Carreira',
-    image: 'url',
-    sellerName: 'João José',
-    createdAt: new Date('01/20/2020').toISOString(),
-  }
-
-  const items = [fakeItem, fakeItem2, fakeItem3]
+  const { data, error } = useSWR(user ? ['getUserProducts', user.id, shouldUpdate] : null, 
+    ([_,sellerId]) => axios.get(`http://localhost:3001/products/sellerId/${sellerId}`),
+  )
 
   const onSelectItem = (item: Item) => setSelectedItem(item)
 
@@ -48,19 +29,32 @@ const Products = () => {
     setIsLoading(false)
   }
 
+  const updateItems = () => setShouldUpdate((prev)=> !prev)
+  
   return (
     <>
       <AddNewItemModal
         open={open}
         handleClose={handleClose}
         selectedItem={selectedItem}
+        mutate={updateItems}
       />
-      <Grid container spacing={3}>
+      {error ? (
+        <Typography> Error!!!</Typography>
+      ) : data ? (
+        <Grid container spacing={3}>
         <Grid item xs={12} sm={6} md={4} lg={3} minHeight={422}>
           <AddNewItemCard title="Add new product" onClick={handleOpen} />
         </Grid>
 
-        {items.map((item, index) => (
+        {data.data.map((item: {
+          name: string
+          image: string
+          address: string
+          price: number
+          sellerName: string
+          createdAt: string
+        }, index: number) => (
           <Grid item xs={12} sm={6} md={4} lg={3}>
             <ItemCard
               item={item}
@@ -71,6 +65,9 @@ const Products = () => {
           </Grid>
         ))}
       </Grid>
+      ) : (
+        <Typography> Esta a carregar</Typography>
+      )}
     </>
   )
 }

@@ -5,7 +5,9 @@ const { Products } = require('../models');
 
 // POST /products - Create a new product
 router.post("/", async (req, res) => {
-  const { name, description, brand, category, price } = req.body;
+
+  console.log('start---------------')
+  const { name, image, description, category, brand, price, address, sellerId, sellerName } = req.body;
 
   try {
     // Check if the product already exists
@@ -16,22 +18,26 @@ router.post("/", async (req, res) => {
     }
 
     // Create a new product
-    const newProduct = await Products.create({
+    await Products.create({
       name,
+      image,
       description,
-      brand,
       category,
+      brand,
       price,
+      address,
+      sellerId,
+      sellerName,
     });
 
-    res.status(201).json(newProduct);
+    res.status(201).json(null);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error" });
   }
 });
 
-// GET /products - Retrieve all products
+
 router.get("/", async (req, res) => {
   try {
     const products = await Products.findAll();
@@ -42,17 +48,17 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/byID/:id", async (req, res) => {
+router.get("/sellerId/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
-    const product = await Products.findByPk(id); 
+    const products = await Products.findAll({ where: { sellerId: id } }); 
 
-    if (!product) {
-      return res.status(404).json({ error: "Product not found" });
+    if (!products) {
+      return  res.json([]);
     }
 
-    res.json(product);
+    res.json(products);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error" });

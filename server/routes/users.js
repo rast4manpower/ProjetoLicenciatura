@@ -15,13 +15,13 @@ router.post("/", async (req, res) => {
       return res.status(400).json({ error: "Username already exists" });
     }
     
-    bcrypt.hash(password, 10).then((hash) => {
-      Users.create({
+    await bcrypt.hash(password, 10).then(async (hash) => {
+      const newUser = await Users.create({
         username: username,
         email : email,
         password: hash,
       });
-      res.json("SUCCESS");
+      res.json({username: newUser.username, id: newUser.id});
     });
   } catch (err) {
     res.status(500).json({ error: "Server error" });
@@ -47,7 +47,7 @@ router.post("/login", async (req, res) => {
           {username: user.username, id: user.id},
           "secret"
         );
-        res.json(acessToken);
+        res.json({username: user.username, id: user.id});
       }
     });
   } catch (err) {

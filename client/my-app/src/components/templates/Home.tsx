@@ -4,43 +4,29 @@ import axios from 'axios'
 import useSWR from 'swr'
 
 const Home = () => {
-  const fakeItem = {
-    name: 'Item name',
-    price: 30,
-    address: 'Rua da Carreira',
-    image: 'url',
-    sellerName: 'João José',
-    createdAt: new Date('01/20/2020').toISOString(),
-  }
-
-  const fakeItem2 = {
-    name: 'Item name',
-    price: 30,
-    address: 'Rua da Carreira',
-    image: 'url',
-    sellerName: 'João José',
-    createdAt: new Date('01/20/2020').toISOString(),
-  }
-
-  const items = [fakeItem, fakeItem2]
-
   const { data, error } = useSWR(['getAllProducts'], () =>
-    //TODO colocar aqui a rota correcta da api
-    axios.post('http://localhost:3001/getallprodutcs'),
+    axios.get('http://localhost:3001/products'),
   )
 
   return (
-    <Grid container gap={2}>
+    <Grid container spacing={2}>
       {error ? (
-        <Typography> Error!!!</Typography>
+        <Typography>Algo correu mal. Por favor tente mais tarde.</Typography>
       ) : data ? (
-        items.map((item, index) => (
-          <Grid item key={index} xs={3}>
-            <ItemCard item={item} />
+        data.data.map((item: {
+          name: string
+          image: string
+          address: string
+          price: number
+          sellerName: string
+          createdAt: string
+        }, index: number) => (
+        <Grid item key={index} xs={12} sm={6} md={4} lg={3}>
+        <ItemCard item={item} />
           </Grid>
         ))
       ) : (
-        <Typography> Esta a carregar</Typography>
+        <Typography> Loading...</Typography>
       )}
     </Grid>
   )

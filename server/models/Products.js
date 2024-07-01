@@ -1,5 +1,13 @@
 module.exports = (sequelize, DataTypes) => {
   const Product = sequelize.define("Products", {
+    sellerId: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    sellerName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     name: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -24,18 +32,14 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.FLOAT,
       allowNull: false,
     },
+    address: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    }
   });
   return Product;
 
- // Product.associate = (models) => {
-    // Um produto pertence a um usuário
-   // Product.belongsTo(models.User, {
-    //  foreignKey: {
-   //     name: "userId",
-     //   allowNull: false,
-    //  },
-   // });
- // };
 
-  
+
+
 };

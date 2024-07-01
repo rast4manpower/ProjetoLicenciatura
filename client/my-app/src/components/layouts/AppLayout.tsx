@@ -45,14 +45,14 @@ const AppLayout = ({ children }: AppLayoutProps) => {
               alignItems="center"
               gap={2}
             >
-              App Name
+              Dibengo
               <Box display="flex" gap={1}>
                 <Button component={Link} to={'/'}>
                   Home
                 </Button>
                 {user && (
                   <Button component={Link} to={'/products'}>
-                    Product
+                    Sell Product
                   </Button>
                 )}
               </Box>
