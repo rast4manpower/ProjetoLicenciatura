@@ -14,7 +14,6 @@ import {
   FormControl,
 } from '@mui/material'
 import EuroIcon from '@mui/icons-material/Euro'
-import { fileToBase64 } from '@utils/file'
 import { useSnackbar } from 'notistack'
 import axios from 'axios'
 import useAuth from 'hooks/useAuth'
@@ -92,18 +91,29 @@ const AddNewItemModal = ({
 
   const handleSubmit = async () => {
     if (product.image) {
-      const image = await fileToBase64(product.image)
-      const result = { ...product, image: 'teste', sellerId: user?.id, sellerName:user?.username }
+      const result = { ...product, sellerId: user?.id, sellerName:user?.username }
+
       try {
         const response = await axios.post('http://localhost:3001/products',
           result
-      )
+        )
+
+        let formData = new FormData()
+        formData.append('image', product.image)
+        if(response.data.id) {
+          await axios.put(`http://localhost:3001/products/image/${response.data.id}`, formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          }) 
+        }
         enqueueSnackbar('Product Created!', { variant: 'success' })
       if(response) {
         mutate()
         handleCloseModal()
       }
     } catch (error: any) {
+      console.log('error', error)
       enqueueSnackbar(error.response.data.error ?? 'Something went very wrong', { variant: 'error' })
     }
     }

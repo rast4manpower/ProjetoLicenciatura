@@ -40,7 +40,7 @@ const ItemCard = ({
       >
         <img
           alt="Event card"
-          src="https://source.unsplash.com/featured/"
+          src={item.image}
           style={{
             width: '100%',
             height: '100%',

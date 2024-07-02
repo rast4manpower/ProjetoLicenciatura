@@ -1,0 +1,4 @@
+# production
+/public/uploads
+
+/node_modules
