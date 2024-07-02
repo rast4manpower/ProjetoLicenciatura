@@ -64,7 +64,7 @@ export const AuthProvider = memo(({ children }: AuthProviderProps) => {
 
   const logout = async () => {
     updateUser(null)
-    if( pathname === '/products') navigate('/')
+    if (pathname === '/products') navigate('/')
   }
 
   const signUp = async ({
@@ -92,14 +92,13 @@ export const AuthProvider = memo(({ children }: AuthProviderProps) => {
     }
   }
 
-  const updateUser = (user: User|null) => {
+  const updateUser = (user: User | null) => {
     setUser(user)
-    localStorage.setItem("auth", JSON.stringify(user))
+    localStorage.setItem('auth', JSON.stringify(user))
   }
-  
 
   useEffect(() => {
-    const user = localStorage.getItem("auth")
+    const user = localStorage.getItem('auth')
     setUser(user ? JSON.parse(user) : null)
   }, [])
 

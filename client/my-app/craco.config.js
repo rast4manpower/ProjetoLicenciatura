@@ -17,9 +17,9 @@ module.exports = {
       webpackConfig.output = {
         ...webpackConfig.output,
         publicPath: '/',
-      };
+      }
 
-      return webpackConfig;
+      return webpackConfig
     },
     alias: {
       '@components': path.resolve(__dirname, 'src/components'),

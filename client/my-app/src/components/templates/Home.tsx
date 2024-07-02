@@ -13,18 +13,23 @@ const Home = () => {
       {error ? (
         <Typography>Algo correu mal. Por favor tente mais tarde.</Typography>
       ) : data ? (
-        data.data.map((item: {
-          name: string
-          image: string
-          address: string
-          price: number
-          sellerName: string
-          createdAt: string
-        }, index: number) => (
-        <Grid item key={index} xs={12} sm={6} md={4} lg={3}>
-        <ItemCard item={item} />
-          </Grid>
-        ))
+        data.data.map(
+          (
+            item: {
+              name: string
+              image: string
+              address: string
+              price: number
+              sellerName: string
+              createdAt: string
+            },
+            index: number,
+          ) => (
+            <Grid item key={index} xs={12} sm={6} md={4} lg={3}>
+              <ItemCard item={item} />
+            </Grid>
+          ),
+        )
       ) : (
         <Typography> Loading...</Typography>
       )}

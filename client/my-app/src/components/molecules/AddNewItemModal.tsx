@@ -14,9 +14,9 @@ import {
   FormControl,
 } from '@mui/material'
 import EuroIcon from '@mui/icons-material/Euro'
-import { useSnackbar } from 'notistack'
 import axios from 'axios'
 import useAuth from 'hooks/useAuth'
+import { useSnackbar } from 'notistack'
 
 export type Item = {
   name: string
@@ -32,7 +32,7 @@ type AddNewItemModalProps = {
   selectedItem?: Item
   open: boolean
   handleClose: () => void
-  mutate: ()=> void
+  mutate: () => void
 }
 
 const categories = [
@@ -44,19 +44,13 @@ const categories = [
   'Criança',
 ]
 
-const brands = [
-  'Nike',
-  'Adidas',
-  'North Face',
-  'Vans',
-  'New Balance',
-]
+const brands = ['Nike', 'Adidas', 'North Face', 'Vans', 'New Balance']
 
 const AddNewItemModal = ({
   selectedItem,
   open,
   handleClose,
-  mutate
+  mutate,
 }: AddNewItemModalProps) => {
   const defaultState: Item = selectedItem ?? {
     name: '',
@@ -70,7 +64,7 @@ const AddNewItemModal = ({
   const [product, setProduct] = useState(defaultState)
 
   const { enqueueSnackbar } = useSnackbar()
-  const {user} = useAuth()
+  const { user } = useAuth()
 
   const handleAccountChange = (
     property: 'name' | 'description' | 'address' | 'category' | 'brand',
@@ -91,37 +85,49 @@ const AddNewItemModal = ({
 
   const handleSubmit = async () => {
     if (product.image) {
-      const result = { ...product, sellerId: user?.id, sellerName:user?.username }
+      const result = {
+        ...product,
+        sellerId: user?.id,
+        sellerName: user?.username,
+      }
 
       try {
-        const response = await axios.post('http://localhost:3001/products',
-          result
+        const response = await axios.post(
+          'http://localhost:3001/products',
+          result,
         )
 
-        let formData = new FormData()
+        const formData = new FormData()
         formData.append('image', product.image)
-        if(response.data.id) {
-          await axios.put(`http://localhost:3001/products/image/${response.data.id}`, formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            }
-          }) 
+        if (response.data.id) {
+          await axios.put(
+            `http://localhost:3001/products/image/${response.data.id}`,
+            formData,
+            {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+              },
+            },
+          )
         }
         enqueueSnackbar('Product Created!', { variant: 'success' })
-      if(response) {
-        mutate()
-        handleCloseModal()
+        if (response) {
+          mutate()
+          handleCloseModal()
+        }
+      } catch (error: any) {
+        console.log('error', error)
+        enqueueSnackbar(
+          error.response.data.error ?? 'Something went very wrong',
+          { variant: 'error' },
+        )
       }
-    } catch (error: any) {
-      console.log('error', error)
-      enqueueSnackbar(error.response.data.error ?? 'Something went very wrong', { variant: 'error' })
-    }
     }
   }
 
   return (
     <Dialog open={open}>
-      <Card sx={{ padding: 3, overflow:"auto" }} >
+      <Card sx={{ padding: 3, overflow: 'auto' }}>
         <Grid container gap={3}>
           <Typography variant="h5">Sell your Item</Typography>
           <TextField
