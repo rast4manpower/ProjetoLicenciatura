@@ -8,12 +8,12 @@ import { Route, Routes } from 'react-router-dom'
 
 const App = () => {
   useEffect(() => {
-    // Add a script tag for a specific external library
+    //  adiciona o script da biblioteca Axios ao documento HTML
     const script = document.createElement('script')
     script.src = 'https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js'
     script.async = true
     document.body.appendChild(script)
-
+    // função que pode ser usada para remover esse script do documento posteriormente.
     return () => {
       document.body.removeChild(script)
     }

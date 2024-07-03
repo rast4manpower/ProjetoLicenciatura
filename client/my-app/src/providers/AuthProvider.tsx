@@ -87,7 +87,6 @@ export const AuthProvider = memo(({ children }: AuthProviderProps) => {
       enqueueSnackbar('Sign up successful', { variant: 'success' })
       navigate('/')
     } catch (error: any) {
-      console.log(error)
       enqueueSnackbar(error.response.data.error, { variant: 'error' })
     }
   }

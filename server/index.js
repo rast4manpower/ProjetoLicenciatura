@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express()
 const cors = require("cors");
+const path = require('path')
 
 const corsOptions ={
   origin:'http://localhost:3000', 
@@ -10,6 +11,7 @@ const corsOptions ={
 
 app.use(express.json());
 app.use(cors(corsOptions));
+app.use(express.static(path.join(__dirname, '/public/uploads')));
 
 const db = require("./models")
 

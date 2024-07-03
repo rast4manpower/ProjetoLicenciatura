@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import {
   Card,
   Dialog,
@@ -19,17 +19,18 @@ import useAuth from 'hooks/useAuth'
 import { useSnackbar } from 'notistack'
 
 export type Item = {
+  id?: string
   name: string
   description: string
-  price: string
-  image: File | undefined
+  price: number
+  image: File | undefined | string
   address: string
   category: string
   brand: string
 }
 
 type AddNewItemModalProps = {
-  selectedItem?: Item
+  selectedItem?: Item | null
   open: boolean
   handleClose: () => void
   mutate: () => void
@@ -52,21 +53,22 @@ const AddNewItemModal = ({
   handleClose,
   mutate,
 }: AddNewItemModalProps) => {
-  const defaultState: Item = selectedItem ?? {
+  const defaultState: Item = {
     name: '',
     description: '',
-    price: '',
+    price: 0,
     image: undefined,
     address: '',
     category: '',
     brand: '',
   }
+
   const [product, setProduct] = useState(defaultState)
 
   const { enqueueSnackbar } = useSnackbar()
   const { user } = useAuth()
 
-  const handleAccountChange = (
+  const handleProductChange = (
     property: 'name' | 'description' | 'address' | 'category' | 'brand',
     event:
       | ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
@@ -84,19 +86,33 @@ const AddNewItemModal = ({
   }
 
   const handleSubmit = async () => {
-    if (product.image) {
-      const result = {
-        ...product,
-        sellerId: user?.id,
-        sellerName: user?.username,
-      }
+    if (!product.image)
+      return enqueueSnackbar('Missing image.', { variant: 'error' })
 
-      try {
-        const response = await axios.post(
-          'http://localhost:3001/products',
-          result,
-        )
+    const result = {
+      ...product,
+      sellerId: user?.id,
+      sellerName: user?.username,
+    }
 
+    let response = null
+
+    try {
+      response = selectedItem
+        ? await axios.put(
+            `http://localhost:3001/products/${selectedItem.id}`,
+            result,
+          )
+        : await axios.post('http://localhost:3001/products', result)
+    } catch (error: any) {
+      return enqueueSnackbar(
+        error.response.data.error ?? 'Something went wrong',
+        { variant: 'error' },
+      )
+    }
+
+    try {
+      if (typeof product.image !== 'string') {
         const formData = new FormData()
         formData.append('image', product.image)
         if (response.data.id) {
@@ -110,20 +126,24 @@ const AddNewItemModal = ({
             },
           )
         }
-        enqueueSnackbar('Product Created!', { variant: 'success' })
-        if (response) {
-          mutate()
-          handleCloseModal()
-        }
-      } catch (error: any) {
-        console.log('error', error)
-        enqueueSnackbar(
-          error.response.data.error ?? 'Something went very wrong',
-          { variant: 'error' },
-        )
       }
+
+      enqueueSnackbar(selectedItem ? 'Product Edited!' : 'Product Created!', {
+        variant: 'success',
+      })
+      mutate()
+      handleCloseModal()
+    } catch (error: any) {
+      enqueueSnackbar(
+        error.response.data.error ?? 'Could not upload your image.',
+        { variant: 'warning' },
+      )
     }
   }
+
+  useEffect(() => {
+    if (selectedItem) setProduct(selectedItem)
+  }, [selectedItem])
 
   return (
     <Dialog open={open}>
@@ -131,13 +151,14 @@ const AddNewItemModal = ({
         <Grid container gap={3}>
           <Typography variant="h5">Sell your Item</Typography>
           <TextField
-            onChange={(event) => handleAccountChange('name', event)}
+            onChange={(event) => handleProductChange('name', event)}
             variant="outlined"
             required
             fullWidth
             id="name"
             label="Product Name"
             name="name"
+            value={product.name}
           />
 
           <TextField
@@ -163,13 +184,17 @@ const AddNewItemModal = ({
           {product.image && (
             <img
               alt="Preview"
-              src={URL.createObjectURL(product.image)}
+              src={
+                typeof product.image === 'string'
+                  ? product.image
+                  : URL.createObjectURL(product.image)
+              }
               style={{ width: '100%', height: 200, objectFit: 'contain' }}
             />
           )}
 
           <TextField
-            onChange={(event) => handleAccountChange('description', event)}
+            onChange={(event) => handleProductChange('description', event)}
             variant="outlined"
             required
             fullWidth
@@ -178,6 +203,7 @@ const AddNewItemModal = ({
             name="description"
             multiline
             minRows={3}
+            value={product.description}
           />
           <TextField
             onChange={(event) => {
@@ -187,7 +213,7 @@ const AddNewItemModal = ({
               if (reg.test(value)) {
                 setProduct((previous) => ({
                   ...previous,
-                  price: value,
+                  price: parseInt(value),
                 }))
               }
             }}
@@ -212,7 +238,7 @@ const AddNewItemModal = ({
               id="category"
               label="Category"
               name="category"
-              onChange={(event) => handleAccountChange('category', event)}
+              onChange={(event) => handleProductChange('category', event)}
             >
               {categories.map((category) => (
                 <MenuItem key={category} value={category}>
@@ -228,7 +254,7 @@ const AddNewItemModal = ({
               id="brand"
               label="Brand"
               name="brand"
-              onChange={(event) => handleAccountChange('brand', event)}
+              onChange={(event) => handleProductChange('brand', event)}
             >
               {brands.map((brand) => (
                 <MenuItem key={brand} value={brand}>
@@ -238,13 +264,14 @@ const AddNewItemModal = ({
             </Select>
           </FormControl>
           <TextField
-            onChange={(event) => handleAccountChange('address', event)}
+            onChange={(event) => handleProductChange('address', event)}
             variant="outlined"
             required
             fullWidth
             id="address"
             label="Address"
             name="address"
+            value={product.address}
           />
 
           <Button variant="contained" onClick={handleCloseModal}>
@@ -252,7 +279,7 @@ const AddNewItemModal = ({
           </Button>
 
           <Button variant="contained" onClick={handleSubmit}>
-            List product
+            {selectedItem ? 'Edit listing ' : 'List product'}
           </Button>
         </Grid>
       </Card>
