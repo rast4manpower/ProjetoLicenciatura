@@ -45,12 +45,15 @@ const AppLayout = ({ children }: AppLayoutProps) => {
               alignItems="center"
               gap={2}
             >
-              
               <Box display="flex" gap={1}>
-      <Link to="/">
-        <img src="LOGO3.jpg" alt="Logo" style={{ cursor: 'pointer' }} />
-      </Link>
-      {/* <Button component={Link} to="/">
+                <Link to="/">
+                  <img
+                    src="LOGO3.jpg"
+                    alt="Logo"
+                    style={{ cursor: 'pointer' }}
+                  />
+                </Link>
+                {/* <Button component={Link} to="/">
         Home
       </Button> */}
                 {user && (
